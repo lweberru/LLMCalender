@@ -1,0 +1,65 @@
+blueprint:
+  name: LLM Helper script for fetching calendar events
+  description: Creates a script which will allow an LLM to fetch calendar events from multiple calendars
+  domain: script
+  input:
+    calendars:
+      name: Calendars
+      description: Select one or more calendars to query
+      selector:
+        entity:
+          multiple: true
+          filter:
+          - domain:
+            - calendar
+  source_url: https://github.com/TheFes/HA-configuration/blob/main/blueprints/script/fetch_weather_forecast_by_llm.yaml
+mode: parallel
+max_exceeded: silent
+description: >
+  Gets all events from the selected calendars between the given start and end time.
+fields:
+  start_of_period:
+    selector:
+      datetime:
+    name: Start of period
+    description: Start of the period for which events are requested. Use an isoformat datetime string.
+    required: true
+  end_of_period:
+    selector:
+      datetime:
+    name: End of period
+    description: End of the period for which events are requested. Use an isoformat datetime string.
+    required: true
+sequence:
+- variables:
+    version: 1.0
+    calendars: !input calendars
+    start: '{{ (start_of_period | as_datetime | as_local).isoformat() }}'
+    end: '{{ (end_of_period | as_datetime | as_local).isoformat() }}'
+- action: calendar.get_events
+  target:
+    entity_id: !input calendars
+  data:
+    start_date_time: '{{ start }}'
+    end_date_time: '{{ end }}'
+  response_variable: calendar_response
+- variables:
+    response: >
+      {% set ns = namespace(events=[]) %}
+      {% for cal, data in calendar_response.items() %}
+        {% if 'events' in data %}
+          {% for e in data.events %}
+            {% set ev = dict(
+              calendar=cal,
+              start=e.start,
+              end=e.end,
+              summary=e.summary,
+              location=(e.location if 'location' in e else '')
+            ) %}
+            {% set ns.events = ns.events + [ev] %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+      {{ ns.events }}
+- stop: ''
+  response_variable: response
