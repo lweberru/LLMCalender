@@ -60,6 +60,10 @@ sequence:
           {% endfor %}
         {% endif %}
       {% endfor %}
-      {{ ns.events }}
+      {{ dict(
+        start_of_period=start,
+        end_of_period=end,
+        events=ns.events
+      ) }}
 - stop: ''
   response_variable: response
