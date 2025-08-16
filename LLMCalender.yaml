@@ -12,7 +12,7 @@ blueprint:
           filter:
           - domain:
             - calendar
-  source_url: https://github.com/TheFes/HA-configuration/blob/main/blueprints/script/fetch_weather_forecast_by_llm.yaml
+  source_url: https://github.com/lweberru/LLMCalender/blob/main/LLMCalender.yaml
 mode: parallel
 max_exceeded: silent
 description: >
