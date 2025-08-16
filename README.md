@@ -43,9 +43,7 @@ response:
 2. Click the three-dot menu in the top right → **Import Blueprint**  
 3. Enter this GitHub URL:
 
-   ```
-   https://github.com/<YOUR_GITHUB_REPO>/blob/main/fetch_calendar_events.yaml
-   ```
+   ```https://github.com/lweberru/LLMCalender/blob/main/LLMCalender.yaml```
 
 4. The blueprint will now be available in your Home Assistant instance.  
 
